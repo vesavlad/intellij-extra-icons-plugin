@@ -8,12 +8,12 @@
 <p align="center">
     <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img src="https://img.shields.io/jetbrains/plugin/v/11058-extra-icons.svg"/></a>
     <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img src="https://img.shields.io/jetbrains/plugin/d/11058-extra-icons.svg"/></a>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/jonathanlermitage/intellij-extra-icons-plugin.svg"/></a>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/graphs/contributors"><img src="https://img.shields.io/github/contributors/jonathanlermitage/intellij-extra-icons-plugin"/></a><br>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build%22"><img src="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/workflows/Build/badge.svg"/></a>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility%22"><img src="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/workflows/Compatibility/badge.svg"/></a><br>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build+EAP%22"><img src="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/workflows/Build%20EAP/badge.svg"/></a>
-    <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility+EAP%22"><img src="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/workflows/Compatibility%20EAP/badge.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/vesavlad/intellij-extra-icons-plugin.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/graphs/contributors"><img src="https://img.shields.io/github/contributors/vesavlad/intellij-extra-icons-plugin"/></a><br>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Build/badge.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Compatibility/badge.svg"/></a><br>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build+EAP%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Build%20EAP/badge.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility+EAP%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Compatibility%20EAP/badge.svg"/></a>
 </p>
 
 Intellij IDEA (Community and Ultimate) plugin that adds icons for files like Travis YML, Appveyor YML, Git sub-modules, etc.  
@@ -59,7 +59,7 @@ Please see [CONTRIBUTION.md](CONTRIBUTION.md).
 
 ## Known issues
 
-Please see [KNOWN_ISSUES.md](KNOWN_ISSUES.md) and [GitHub open issues](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues).
+Please see [KNOWN_ISSUES.md](KNOWN_ISSUES.md) and [GitHub open issues](https://github.com/vesavlad/intellij-extra-icons-plugin/issues).
 
 ## License
 
@@ -75,7 +75,7 @@ You only have to pay a subscription if you want to support my work by using the 
 * Mateusz Bajorek (<mateusz.bajorek@gmail.com>)
 * Bouteiller Alan ([github.com/bouteillerAlan](https://github.com/bouteillerAlan))
 * Gaëtan Maisse ([github.com/gaetanmaisse](https://github.com/gaetanmaisse))
-* please see the [contributors list](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/graphs/contributors)
+* please see the [contributors list](https://github.com/vesavlad/intellij-extra-icons-plugin/graphs/contributors)
 
 ## Screenshots
 
