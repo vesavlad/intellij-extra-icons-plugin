@@ -24,8 +24,10 @@ import java.util.stream.Stream;
 public class ProjectUtils {
 
     private static final Logger LOGGER = Logger.getInstance(ProjectUtils.class);
-
     private static final Map<String, Set<String>> facetsCache = new ConcurrentHashMap<>();
+
+    private static final String PROJECT_ISSUES_URL = "https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues";
+    public static final String PLEASE_OPEN_ISSUE_MSG = "You could open an issue: " + PROJECT_ISSUES_URL + ". Thank you!";
 
     /**
      * Refresh project view.

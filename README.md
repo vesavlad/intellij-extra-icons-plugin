@@ -1,3 +1,5 @@
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
+
 <h1 align="center">
     <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons">
       <img src="./src/main/resources/META-INF/pluginIcon.svg" width="84" height="84" alt="logo"/>
@@ -18,7 +20,7 @@
 
 Intellij IDEA (Community and Ultimate) plugin that adds icons for files like Travis YML, Appveyor YML, Git sub-modules, etc.  
 You can also register your own icons in order to override file icons, but also all [IDE icons](https://jetbrains.design/intellij/resources/icons_list/) (including toolbars, menus, etc.). It works with all JetBrains products like IntelliJ (ultimate and community), PyCharm, WebStorm, DataGrip, etc.  
-To get started with this plugin, please see [GET_STARTED.md](docs/GET_STARTED.md).
+To get started with this plugin, please see this [guide](docs/GET_STARTED.md).
 
 1. [Download](#download)
 2. [Build](#build)  
@@ -30,28 +32,29 @@ To get started with this plugin, please see [GET_STARTED.md](docs/GET_STARTED.md
 
 ## Download
 
-Download plugin from [JetBrains Plugins Repository](https://plugins.jetbrains.com/plugin/11058-extra-icons) or via your JetBrains IDE (<kbd>File</kbd>, <kbd>Settings...</kbd>, <kbd>Plugins</kbd>, <kbd>Marketplace</kbd>).
+Download plugin from the [JetBrains marketplace](https://plugins.jetbrains.com/plugin/11058-extra-icons) or via your IDE: <kbd>File</kbd>, <kbd>Settings...</kbd>, <kbd>Plugins</kbd>, <kbd>Marketplace</kbd>.
 
 ## Build
 
-Install JDK11+. You should be able to start Gradle Wrapper (`gradlew`). See Gradle commands below. 
+Install JDK11+. You should be able to start Gradle Wrapper (`gradlew`). See Gradle commands below.  
+You may also want to see the [development FAQ](./docs/DEV_FAQ.md) if you faced an issue.
 
 ### Gradle commands
 
 ```bash
-$ gradlew buildPlugin        # build plugin to build/distributions/*.zip
-$ gradlew runIde             # try plugin in a standalone IDE
-$ gradlew dependencyUpdates  # check for dependencies updates
-$ gradlew verifyPlugin       # validate plugin.xml descriptors as well as plugin's archive structure
-$ gradlew runPluginVerifier  # check for compatibility issues with IDE
-$ gradlew test               # run tests
+$ ./gradlew buildPlugin        # build plugin to build/distributions/*.zip
+$ ./gradlew runIde             # try plugin in a standalone IDE
+$ ./gradlew dependencyUpdates  # check for dependencies updates
+$ ./gradlew verifyPlugin       # validate plugin.xml descriptors as well as plugin's archive structure
+$ ./gradlew runPluginVerifier  # check for compatibility issues with IDE
+$ ./gradlew test               # run tests
 ```
 
-Additionally, take a look at the `do` (or `do.cmd` on Windows) script: it contains useful commands to build, run and test the plugin, check for dependencies updates and some maintenance tasks. Show available commands by running `./do help`. 
+Additionally, take a look at the `Makefile` script: it contains useful commands to build, run and test the plugin, check for dependencies updates and some maintenance tasks. Show available commands by running `make help`. 
 
 ### Optimizations
 
-Optionally, you may want to install SVGO in order to optimize SVG icons. Install SVGO with `npm install -g svgo`, then optimize SVG files by running `./do svgo`.
+Optionally, you may want to install SVGO in order to optimize SVG icons. Install SVGO with `npm install -g svgo`, then optimize SVG files by running `make svgo`.
 
 ## How to contribute
 
@@ -64,7 +67,7 @@ Please see [KNOWN_ISSUES.md](KNOWN_ISSUES.md) and [GitHub open issues](https://g
 ## License
 
 MIT License. In other words, you can do what you want: this project is entirely OpenSource, Free and Gratis.  
-You only have to pay a subscription if you want to support my work by using the version that is published to the JetBrains marketplace. If you don't want to (or can't) support my work, you can still use old releases (up to 1.69), or package and install your own release for free.
+You only have to pay a subscription if you want to support my work by using the version that is published to the JetBrains marketplace. If you don't want to (or can't) support my work, you can still use old releases (up to 1.69), or package and install your own release for free. If you have any question, please see the [license FAQ](docs/LICENSE_FAQ.md).
 
 ## Contributors
 

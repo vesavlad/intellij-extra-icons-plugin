@@ -7,13 +7,16 @@ public enum ModelTag {
     ANGULAR2("Angular"),
     DOCKER("Docker"),
     FLYWAY("Flyway"),
+    HELM("Helm"),
     HTML("HTML"),
     KUBERNETES("Kubernetes"),
     LIBRE_OFFICE("LibreOffice"),
     LIQUIBASE("Liquibase"),
     MS_OFFICE("MS Office"),
     NESTJS("NestJS"),
-    STORYBOOK("Storybook");
+    PRETTIER("Prettier"),
+    STORYBOOK("Storybook"),
+    TRAVIS("Travis CI");
 
     ModelTag(String name) {
         this.name = name;

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,8 +44,12 @@ public abstract class BaseIconProvider
     FileIconProvider /* to override icons in Project view */ {
 
     private static final Logger LOGGER = Logger.getInstance(BaseIconProvider.class);
+    private final String className = this.getClass().getSimpleName();
 
     private final List<Model> models;
+
+    private long checks_done = 0;
+    private long checks_saved = 0;
 
     public BaseIconProvider() {
         super();
@@ -56,6 +61,35 @@ public abstract class BaseIconProvider
      * This list will be processed by constructor and models 'enabled' field updated according to running IDE configuration.
      */
     protected abstract List<Model> getAllModels();
+
+    private static Model extractAltModel(Model model, int altIconIdx) {
+        String altDescription;
+        String altId;
+        if (altIconIdx < 1) {
+            if (model.getAltIcons().length == 1) {
+                altDescription = model.getDescription() + " (alternative)";
+            } else {
+                altDescription = model.getDescription() + " (alternative 1)";
+            }
+            altId = model.getId() + "_alt";
+        } else {
+            altDescription = model.getDescription() + " (alternative " + (altIconIdx + 1) + ")";
+            altId = model.getId() + "_alt" + (altIconIdx + 1);
+        }
+        return Model.createAltModel(model, altId, model.getIdeIcon(), model.getAltIcons()[altIconIdx], altDescription);
+    }
+
+    public static Stream<Model> modelList(Model model) {
+        if (model.getAltIcons() == null || model.getAltIcons().length == 0) {
+            return Stream.of(model);
+        }
+        List<Model> models = new ArrayList<>();
+        models.add(model);
+        for (int i = 0; i < model.getAltIcons().length; i++) {
+            models.add(extractAltModel(model, i));
+        }
+        return models.stream();
+    }
 
     /**
      * Check whether this icon provider supports the input file.
@@ -106,7 +140,7 @@ public abstract class BaseIconProvider
                     psiFileSystemItem = PsiManager.getInstance(project).findFile(file);
                 }
                 if (psiFileSystemItem != null) {
-                    return getIcon(psiFileSystemItem, 0 /* flags are ignored */);
+                    return getIcon(psiFileSystemItem, 0 /* flags are ignored (could be com.intellij.ui.icons.ImageDescriptor.HAS_2x or HAS_DARK_2x) */);
                 }
             }
         } catch (Throwable e) {
@@ -172,16 +206,33 @@ public abstract class BaseIconProvider
             }
             String parentName = parent(currentPsiFileItem);
             String currentFileName = currentPsiFileItem.getName().toLowerCase();
-            Optional<String> fullPath = getFullPath(currentPsiFileItem);
+            String fullPath = getFullPath(currentPsiFileItem);
             Set<String> facets = ProjectUtils.getFacets(project);
             Double additionalUIScale = SettingsService.getIDEInstance().getAdditionalUIScale();
+            SettingsService service = getSettingsService(project);
+            Object parentModelIdWhoseCheckFailed = null;
             for (final Model model : getModelsIncludingUserModels(project)) {
-                if (model.getModelType() == currentModelType && isModelEnabled(project, model) && model.check(parentName, currentFileName, fullPath, facets, project)) {
-                    return IconUtils.getIcon(model, additionalUIScale);
+                if (model.getModelType() == currentModelType && model.isEnabled() && !service.getDisabledModelIds().contains(model.getId())) {
+                    if (model.getParentId() != null && parentModelIdWhoseCheckFailed == model.getParentId()) {
+                        // check already returned false for this model (parent or alt), don't need to check again
+                        checks_saved++;
+                        continue;
+                    }
+                    checks_done++;
+                    if (model.check(parentName, currentFileName, fullPath, facets, project)) {
+                        return IconUtils.getIcon(model, additionalUIScale);
+                    } else {
+                        parentModelIdWhoseCheckFailed = model.getParentId() == null ? model.getId() : model.getParentId();
+                    }
                 }
             }
         } catch (Throwable e) {
             logError(e);
+        } finally {
+            if (LOGGER.isDebugEnabled()) {
+                // activate with Help > Diagnostic Tools > Debug Log Settings > #lermitage.intellij.extra.icons.BaseIconProvider
+                LOGGER.debug(className + " did " + checks_done + " model checks and saved " + checks_saved + " model checks");
+            }
         }
         return null;
     }
@@ -206,19 +257,15 @@ public abstract class BaseIconProvider
             customModelsStream = SettingsIDEService.getInstance().getCustomModels().stream();
         }
 
-        return Stream.concat(customModelsStream, models.stream()).collect(Collectors.toList());
+        return Stream.concat(customModelsStream, models.stream()).collect(Collectors.toList());//
     }
 
-    private Optional<String> getFullPath(@NotNull PsiFileSystemItem file) {
+    @Nullable
+    private String getFullPath(@NotNull PsiFileSystemItem file) {
         if (file.getVirtualFile() != null) {
-            return Optional.of(file.getVirtualFile().getPath().toLowerCase());
+            return file.getVirtualFile().getPath().toLowerCase();
         }
-        return Optional.empty();
-    }
-
-    private boolean isModelEnabled(@Nullable Project project, @NotNull Model model) {
-        SettingsService service = getSettingsService(project);
-        return !service.getDisabledModelIds().contains(model.getId()) && model.isEnabled();
+        return null;
     }
 
     /**
@@ -243,7 +290,7 @@ public abstract class BaseIconProvider
         if (service.getIgnoredPatternObj() == null || service.getIgnoredPattern() == null || service.getIgnoredPattern().isEmpty()) {
             return false;
         }
-        VirtualFile contentRoot = ProjectFileIndex.SERVICE.getInstance(project).getContentRootForFile(file);
+        VirtualFile contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(file);
         if (contentRoot == null) {
             return false;
         }

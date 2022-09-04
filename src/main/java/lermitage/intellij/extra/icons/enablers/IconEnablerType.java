@@ -4,5 +4,15 @@ package lermitage.intellij.extra.icons.enablers;
 
 public enum IconEnablerType {
 
-    GIT_SUBMODULE_FOLDER
+    /** Detect git submodule folders. */
+    IS_GIT_SUBMODULE_FOLDER,
+
+    /** Detect Helm folders. */
+    IS_HELM_FOLDER,
+
+    /** Detect folders containing Angular files. */
+    IS_IN_ANGULAR_FOLDER,
+
+    /** Detect folders containing Helm files. */
+    IS_IN_HELM_FOLDER
 }

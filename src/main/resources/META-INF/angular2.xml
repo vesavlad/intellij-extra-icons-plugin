@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: MIT -->
+
 <idea-plugin>
 	<extensions defaultExtensionNs="com.intellij">
         <!--suppress PluginXmlValidity (can't find third-party plugins, but it's OK) -->

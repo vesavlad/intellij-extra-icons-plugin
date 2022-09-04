@@ -2,6 +2,7 @@
 
 package lermitage.intellij.extra.icons.cfg;
 
+import com.google.common.base.Strings;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -20,6 +21,7 @@ import lermitage.intellij.extra.icons.cfg.dialogs.ModelDialog;
 import lermitage.intellij.extra.icons.cfg.models.PluginIconsSettingsTableModel;
 import lermitage.intellij.extra.icons.cfg.models.UserIconsSettingsTableModel;
 import lermitage.intellij.extra.icons.cfg.services.impl.SettingsProjectService;
+import lermitage.intellij.extra.icons.enablers.EnablerUtils;
 import lermitage.intellij.extra.icons.utils.IconUtils;
 import lermitage.intellij.extra.icons.utils.ProjectUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +41,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableStringConverter;
@@ -78,12 +81,16 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
     private JComboBox<String> comboBoxIconsGroupSelector;
     private JLabel disableOrEnableOrLabel;
     private JLabel disableOrEnableLabel;
+    private JCheckBox ignoreWarningsCheckBox;
+    private JButton buttonReloadProjectsIcons;
 
     private PluginIconsSettingsTableModel pluginIconsSettingsTableModel;
     private UserIconsSettingsTableModel userIconsSettingsTableModel;
     private Project project;
     private boolean isProjectForm = false;
     private List<Model> customModels = new ArrayList<>();
+
+    private boolean forceUpdate = false;
 
     public SettingsForm() {
         buttonEnableAll.addActionListener(e -> enableAll(true));
@@ -95,6 +102,13 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                 DocumentListener.super.documentChanged(event);
                 applyFilter();
             }
+        });
+        buttonReloadProjectsIcons.addActionListener(e -> {
+            EnablerUtils.forceInitAllEnablers();
+            ProjectUtils.refreshOpenedProjects();
+            JOptionPane.showMessageDialog(null,
+                "All icons in project views should have been reloaded.", "Icons reloaded",
+                JOptionPane.INFORMATION_MESSAGE);
         });
     }
 
@@ -129,6 +143,9 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
 
     @Override
     public boolean isModified() {
+        if (forceUpdate) {
+            return true;
+        }
         SettingsService service = SettingsService.getInstance(project);
         if (isProjectForm) {
             SettingsProjectService projectService = (SettingsProjectService) service;
@@ -146,6 +163,9 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
             return true;
         }
         if (!CollectionUtils.isEqualCollection(customModels.stream().map(Model::isEnabled).collect(Collectors.toList()), collectUserIconEnabledStates())) {
+            return true;
+        }
+        if (service.getIgnoreWarnings() != ignoreWarningsCheckBox.isSelected()) {
             return true;
         }
         if (service.getIgnoredPattern() == null && ignoredPatternTextField.getText().isEmpty()) {
@@ -191,6 +211,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                 "Invalid Additional UI Scale Factor",
                 JOptionPane.WARNING_MESSAGE);
         }
+        service.setIgnoreWarnings(ignoreWarningsCheckBox.isSelected());
         List<Boolean> enabledStates = collectUserIconEnabledStates();
         for (int i = 0; i < customModels.size(); i++) {
             Model model = customModels.get(i);
@@ -199,10 +220,14 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         service.setCustomModels(customModels);
 
         if (isProjectForm) {
+            EnablerUtils.forceInitAllEnablers(project);
             ProjectUtils.refresh(project);
         } else {
+            EnablerUtils.forceInitAllEnablers();
             ProjectUtils.refreshOpenedProjects();
         }
+
+        forceUpdate = false;
     }
 
     @Nullable
@@ -216,15 +241,24 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         ignoredPatternTitle.setText("Regex to ignore relative paths:");
         ignoredPatternTextField.setToolTipText("<html>Regex is a <b>Java regex</b>, and file path is <b>lowercased</b> before check.</html>");
         additionalUIScaleTitle.setText("Additional UI Scale Factor to adjust user icons size:");
-        additionalUIScaleTextField.setToolTipText("<html>Useful if you run IDE with <b>-Dsun.java2d.uiScale.enabled=false</b> " +
-            "flag and <b>user icons are too small</b>.<br>Float value. Defaults to <b>1.0</b>.</html>");
+        additionalUIScaleTextField.setToolTipText(
+            "<html>Useful if you run IDE with <b>-Dsun.java2d.uiScale.enabled=false</b> " +
+                "flag and <b>user icons are too small</b>.<br>Float value. Defaults to <b>1.0</b>.</html>");
+        ignoreWarningsCheckBox.setText("Ignore plugin's warnings");
+        ignoreWarningsCheckBox.setToolTipText(
+            "You may see notifications saying that some features have been disabled<br>" +
+                "due to plugin or IDE errors, like IDE filename index issues.<br>" +
+                "Use this checkbox to silent these notifications.");
         filterLabel.setText("Regex to filter Plugin icons table by:");
         filterTextField.setText("");
-        filterTextField.setToolTipText("<html>Regex is a <b>Java regex</b> and <b>is not case-sensitive</b><br>" +
-            "You can also type <b>yes</b> or <b>no</b> to find the icons that are enabled or disabled.</html>");
+        filterTextField.setToolTipText(
+            "<html>Regex is a <b>Java regex</b> and <b>is not case-sensitive</b><br>" +
+                "You can also type <b>yes</b> or <b>no</b> to find the icons that are enabled or disabled.</html>");
         filterResetBtn.setText("Reset filter");
-        bottomTip.setText("<html><b>Icons are ordered by priority</b>. To use an <i>alternative</i> icon (as for Markdown files), " +
-            "deactivate the icon(s) with higher priority.</html>");
+        bottomTip.setText(
+            "<html><b>Icons are ordered by priority</b>. To use an <b>alternative</b> icon (as for Markdown files), " +
+                "deactivate the icon(s) with higher priority.<br/>The <b>Restart</b> column indicates if you need to restart " +
+                "the IDE to see changes.</html>");
         initCheckbox();
         loadPluginIconsTable();
         userIconsTable.setShowHorizontalLines(false);
@@ -235,11 +269,17 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         loadUserIconsTable();
         loadIgnoredPattern();
         loadAdditionalUIScale();
+        loadIgnoreWarnings();
         if (isProjectForm) {
             additionalUIScaleTitle.setVisible(false);
             additionalUIScaleTextField.setVisible(false);
+            ignoreWarningsCheckBox.setVisible(false);
+            buttonReloadProjectsIcons.setVisible(false);
         }
         comboBoxIconsGroupSelector.addItem("icons");
+        buttonReloadProjectsIcons.setText("Reload projects icons");
+        buttonReloadProjectsIcons.setToolTipText("<b>Reload icons in all project views.</b><br>" +
+            "Use it if some icons were not loaded due to errors like IDE filename index issues.");
         Arrays.stream(ModelTag.values()).forEach(modelTag -> comboBoxIconsGroupSelector.addItem(modelTag.getName() + " tagged icons"));
     }
 
@@ -273,8 +313,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
     }
 
     private void setComponentState(boolean enabled) {
-        Stream.of(pluginIconsTable, userIconsTable, ignoredPatternTitle,
-            ignoredPatternTextField, additionalUIScaleTitle, additionalUIScaleTextField,
+        Stream.of(pluginIconsTable, userIconsTable, ignoredPatternTitle, ignoredPatternTextField,
             iconsTabbedPane, addToIDEUserIconsCheckbox, filterLabel,
             filterTextField, filterResetBtn, buttonEnableAll,
             disableOrEnableOrLabel, buttonDisableAll, disableOrEnableLabel,
@@ -288,6 +327,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         loadUserIconsTable();
         loadIgnoredPattern();
         loadAdditionalUIScale();
+        loadIgnoreWarnings();
     }
 
     private void loadUserIconsTable() {
@@ -309,11 +349,12 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         userIconsTable.setModel(userIconsSettingsTableModel);
         userIconsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         userIconsTable.setRowHeight(28);
-        userIconsTable.getColumnModel().getColumn(UserIconsSettingsTableModel.ICON_COL_NUMBER).setMaxWidth(28);
-        userIconsTable.getColumnModel().getColumn(UserIconsSettingsTableModel.ICON_COL_NUMBER).setWidth(28);
-        userIconsTable.getColumnModel().getColumn(UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setWidth(28);
-        userIconsTable.getColumnModel().getColumn(UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setMaxWidth(28);
-        userIconsTable.getColumnModel().getColumn(UserIconsSettingsTableModel.ICON_LABEL_COL_NUMBER).sizeWidthToFit();
+        TableColumnModel columnModel = userIconsTable.getColumnModel();
+        columnModel.getColumn(UserIconsSettingsTableModel.ICON_COL_NUMBER).setMaxWidth(28);
+        columnModel.getColumn(UserIconsSettingsTableModel.ICON_COL_NUMBER).setWidth(28);
+        columnModel.getColumn(UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setWidth(28);
+        columnModel.getColumn(UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setMaxWidth(28);
+        columnModel.getColumn(UserIconsSettingsTableModel.ICON_LABEL_COL_NUMBER).sizeWidthToFit();
         if (currentSelected != -1 && currentSelected < userIconsTable.getRowCount()) {
             userIconsTable.setRowSelectionInterval(currentSelected, currentSelected);
         }
@@ -405,6 +446,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                 !disabledModelIds.contains(m.getId()),
                 m.getDescription(),
                 Arrays.toString(m.getTags().stream().map(ModelTag::getName).toArray()).replaceAll("\\[|]*", "").trim(),
+                !Strings.isNullOrEmpty(m.getIdeIcon()),
                 m.getTags(),
                 m.getId()
             })
@@ -412,16 +454,19 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         pluginIconsTable.setModel(pluginIconsSettingsTableModel);
         pluginIconsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         pluginIconsTable.setRowHeight(28);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_COL_NUMBER).setMaxWidth(28);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_COL_NUMBER).setWidth(28);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setWidth(28);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setMaxWidth(28);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_LABEL_COL_NUMBER).sizeWidthToFit();
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_TAGS_LABEL_COL_NUMBER).setMaxWidth(120);
-        pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_TAGS_LABEL_COL_NUMBER).setMinWidth(120);
+        TableColumnModel columnModel = pluginIconsTable.getColumnModel();
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_COL_NUMBER).setMaxWidth(28);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_COL_NUMBER).setWidth(28);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setWidth(28);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER).setMaxWidth(28);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_LABEL_COL_NUMBER).sizeWidthToFit();
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_TAGS_LABEL_COL_NUMBER).setMaxWidth(120);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_TAGS_LABEL_COL_NUMBER).setMinWidth(120);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_REQUIRE_IDE_RESTART).setMaxWidth(65);
+        columnModel.getColumn(PluginIconsSettingsTableModel.ICON_REQUIRE_IDE_RESTART).setMinWidth(65);
         // set invisible but keep data
-        pluginIconsTable.getColumnModel().removeColumn(pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_ID_COL_NUMBER));
-        pluginIconsTable.getColumnModel().removeColumn(pluginIconsTable.getColumnModel().getColumn(PluginIconsSettingsTableModel.ICON_TAGS_ENUM_LIST_COL_NUMBER));
+        columnModel.removeColumn(columnModel.getColumn(PluginIconsSettingsTableModel.ICON_ID_COL_NUMBER));
+        columnModel.removeColumn(columnModel.getColumn(PluginIconsSettingsTableModel.ICON_TAGS_ENUM_LIST_COL_NUMBER));
         if (currentSelected != -1) {
             pluginIconsTable.setRowSelectionInterval(currentSelected, currentSelected);
         }
@@ -435,8 +480,13 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         additionalUIScaleTextField.setText(Double.toString(SettingsService.getIDEInstance().getAdditionalUIScale()));
     }
 
+    private void loadIgnoreWarnings() {
+        ignoreWarningsCheckBox.setSelected(SettingsService.getIDEInstance().getIgnoreWarnings());
+    }
+
     private JComponent createToolbarDecorator() {
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(userIconsTable)
+
             .setAddAction(anActionButton -> {
                 ModelDialog modelDialog = new ModelDialog(this);
                 if (modelDialog.showAndGet()) {
@@ -445,7 +495,9 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                     foldersFirst(customModels);
                     setUserIconsTableModel();
                 }
-            }).setEditAction(anActionButton -> {
+            })
+
+            .setEditAction(anActionButton -> {
                 int currentSelected = userIconsTable.getSelectedRow();
                 ModelDialog modelDialog = new ModelDialog(this);
                 modelDialog.setModelToEdit(customModels.get(currentSelected));
@@ -454,11 +506,55 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                     customModels.set(currentSelected, newModel);
                     setUserIconsTableModel();
                 }
-            }).setRemoveAction(anActionButton -> {
+            })
+
+            .setRemoveAction(anActionButton -> {
                 customModels.remove(userIconsTable.getSelectedRow());
                 setUserIconsTableModel();
-            }).setButtonComparator("Add", "Edit", "Remove");
+            })
+
+            .setButtonComparator("Add", "Edit", "Remove")
+
+            .setMoveUpAction(anActionButton -> reorderUserIcons(MoveDirection.UP, userIconsTable.getSelectedRow()))
+
+            .setMoveDownAction(anActionButton -> reorderUserIcons(MoveDirection.DOWN, userIconsTable.getSelectedRow()));
         return decorator.createPanel();
+    }
+
+    private void reorderUserIcons(MoveDirection moveDirection, int selectedItemIdx) {
+        Model modelToMove = customModels.get(selectedItemIdx);
+        int newSelectedItemIdx = moveDirection == MoveDirection.UP ? selectedItemIdx - 1 : selectedItemIdx + 1;
+        boolean selectedItemIsEnabled = (boolean) userIconsTable.getValueAt(selectedItemIdx, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER);
+        boolean newSelectedItemIsEnabled = (boolean) userIconsTable.getValueAt(newSelectedItemIdx, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER);
+        List<Boolean> itemsAreEnabled = new ArrayList<>();
+        for (int i = 0; i < userIconsTable.getRowCount(); i++) {
+            itemsAreEnabled.add((Boolean) userIconsTable.getValueAt(i, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER));
+        }
+
+        customModels.set(selectedItemIdx, customModels.get(newSelectedItemIdx));
+        customModels.set(newSelectedItemIdx, modelToMove);
+        setUserIconsTableModel();
+
+        // User may have enabled or disabled some items, but changes are not applied yet to customModels, so setUserIconsTableModel will reset
+        // the Enabled column to previous state. We need to reapply user changes on this column.
+        for (int i = 0; i < userIconsTable.getRowCount(); i++) {
+            userIconsTable.setValueAt(itemsAreEnabled.get(i), i, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER);
+        }
+        userIconsTable.setValueAt(selectedItemIsEnabled, newSelectedItemIdx, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER);
+        userIconsTable.setValueAt(newSelectedItemIsEnabled, selectedItemIdx, UserIconsSettingsTableModel.ICON_ENABLED_COL_NUMBER);
+
+        userIconsTable.clearSelection();
+        userIconsTable.setRowSelectionInterval(newSelectedItemIdx, newSelectedItemIdx);
+
+        // TODO fix Model and ModelCondition equals & hashCode methods in order
+        //  to fix CollectionUtils.isEqualCollection(customModels, service.getCustomModels()).
+        //  For now, the comparison returns true when customModels ordering changed. It should return false.
+        forceUpdate = true;
+    }
+
+    private enum MoveDirection {
+        UP,
+        DOWN
     }
 
     private void foldersFirst(List<Model> models) {

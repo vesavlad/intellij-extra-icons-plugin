@@ -1,6 +1,64 @@
 # Extra Icons Change Log
 
-## 2022.1.3 (WIP)
+## 2022.1.10 (WIP)
+* add an option in Extra Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance & Behavior, Extra Icons, then hit the `Reload projects icons` button. Again, feel free to upvote [**IDEA-289822**](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
+* add an alternative Dependabot icon.
+* add an alternative Draw.io icon.
+* add an alternative Helm icon.
+* improve icons reloading on config change.
+
+## 2022.1.9 (2022/08/27)
+* support many audio/video files. Thx to contributor **Serial-ATA**.
+* try to mitigate errors when querying IDE filename index (will now retry twice before failing). This is a JetBrains issue, **feel free to upvote** [**IDEA-289822**](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
+* internal: upgrade TwelveMonkeys library to 3.8.3 (used to preview PNG icons).
+* rework Haxe icons (PNG icon to SVG).
+* improve Dotenv and Cookie file support.
+* support `go.mod` files (I am proud of this icon :smile:).
+* support GitHub Actions YML files.
+* disable plugin's dynamic reloading since it never worked. Plugin uses an IconPathPatcher implementation in order to override IDE icons, which prevents dynamic reloading.
+
+## 2022.1.8 (2022/08/06)
+* support Nx `nx.json` files.
+* support many audio files. Thx to contributor **Serial-ATA**.
+* support Cypress json files.
+* add an alternative Prettier icon.
+* add an alternative 7zip icon.
+* internal: fix usage of some deprecated code.
+* don't crash if plugin can't query the IDE filename index, and simply display a notification.
+* add an option to ignore plugin's warnings.
+
+## 2022.1.7 (2022/07/16)
+* performance improvement.
+* implement #100: add buttons to allow reordering of entries in the User Icons list.
+* improve support of older IDEs (based on IJ 2021). IDE build number is detected at runtime and code is adapted when needed.
+* improve Flyway and Liquibase support.
+* support VSCode `*.code-workspace` files.
+* support `*.tgz` files.
+* support Deno json and jsonc files.
+* refactoring and code cleanup.
+
+## 2022.1.6 (2022/06/25)
+* improve accuracy and performance of Angular support.
+* support various Helm files and folders.
+* support Cookie text files.
+* support `node_modules` folders.
+* add an alternative YAML icon.
+* the icons list in the configuration panel now indicates if you need to restart the IDE to see changes.
+* some code cleanup.
+
+## 2022.1.5 (2022/06/14)
+* fix #99: Angular support (when it looks for `angular.json` files) may freeze the IDE on some specific projects.
+* prevent a possible crash with the new IntelliJ UI (currently in preview) for IntelliJ 2022.2+ EAP (222.2889.14+).
+* rework Gradle icons.
+* add an alternative Gitlab icon (the latest version from the Gitlab website).
+
+## 2022.1.4 (2022/06/04)
+* support cache2k xml config files.
+* fix #96: rework Angular support.
+* add a dedicated color to Angular controller icon.
+* rework some Angular icons.
+
+## 2022.1.3 (2022/05/07)
 * internal: improve error handling.
 * support `requirements.txt` files in Python projects and projects with the Python facet.
 * support `lighttpd.conf` files.
@@ -11,6 +69,8 @@
 * config panel: some icons now have tags, and you can enable and disable multiple icons by tags.
 * fix the priority of Angular icons when the Angular plugin is installed.
 * add alternative icons for FAQ files, and support HELP files.
+* fix #81: rework Angular support.
+* support `pnpm-lock.yaml` and `vite.config.ts` files. Thx **iamKyun**.
 
 ## 2022.1.2 (2022/04/03)
 * rework Babel icon, and provide an alternative icon.
@@ -277,7 +337,7 @@ Thx [Alan Bouteiller](https://github.com/bouteillerAlan) for his contributions:
 * provide an alternative icon for Certificate files.
 * provide an alternative icon for License files.
 * provide an alternative icon for Readme files (based on GitHub Readme icon).
-* add new configuration condition: facets. You can now choose to activate a custom icon if a specific facet is activated in project (as in `Project Structure > Project Settings > Facets`), like "Spring", "JPA", etc. This condition must be associated with an other condition like "Names", "Regex", etc.
+* add new configuration condition: facets. You can now choose to activate a custom icon if a specific facet is activated in project (as in `Project Structure > Project Settings > Facets`), like "Spring", "JPA", etc. This condition must be associated with one other condition like "Names", "Regex", etc.
 * removed usage of `sun.awt.image.ToolkitImage`. It will fix some Gradle build errors with JDK9+, but some IDE like PyCharm *may* (I did not reproduce) not display a few icons. If it doesn't work for you, please open an issue (and attach IDE logs) and I will probably revert this change.
 * support [Tinylog](https://tinylog.org) `tinylog.properties` files.
 
@@ -570,10 +630,10 @@ Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-pl
 
 ## 0.19 and 0.20 (2018/12/21)
 * starting from 0.19, there are two builds:
-  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundles features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Extra Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
+  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundle features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Extra Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
   * even minor revision number (0.20, 0.22, 1.0, 1.2...): compatible with latest IDE builds (183.0, aka 2018.3).
   
-This way, you simply have to download the latest version offered by the plugins manager: on older IDE, you'll get the latest odd minor revision number. On recent IDE, you get the latest even minor revision number that sheeps same features as odd version, plus features that comes with recent IDE builds.
+This way, you simply have to download the latest version offered by the plugin manager: on older IDE, you'll get the latest odd minor revision number. On recent IDE, you get the latest even minor revision number that sheeps same features as odd version, plus features that comes with recent IDE builds.
 
 ## 0.18 (2018/12/10)
 * plugin is no more compatible with 173.0 IDE builds: minimum version is now 183.0 (2018.3).

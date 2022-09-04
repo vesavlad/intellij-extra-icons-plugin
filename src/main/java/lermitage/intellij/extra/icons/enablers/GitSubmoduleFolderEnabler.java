@@ -5,6 +5,7 @@ package lermitage.intellij.extra.icons.enablers;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import lermitage.intellij.extra.icons.utils.GitSubmoduleUtils;
+import lermitage.intellij.extra.icons.utils.ProjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
@@ -23,37 +24,44 @@ public class GitSubmoduleFolderEnabler implements IconEnabler {
      * parsing {@code .gitmodule} files for every folder in the project.
      * Useful if you add a new git submodule: user will wait up to {@value}ms to see the corresponding git submodule icon.
      */
-    private static final long INIT_TTL_MS = 300_000L;
+    private static final long INIT_TTL_MS = 300_000L; // 5min
     private boolean initialized = false;
     private long lastInit = -1;
     private Set<String> submoduleFolders;
 
     // one icon enabler per project
-    private static final Map<Project, IconEnabler> iconEnablersCache = new ConcurrentHashMap<>();
+    private static final Map<Project, IconEnabler> enablersCache = new ConcurrentHashMap<>();
 
-    public static IconEnabler getIntance(@NotNull Project project) {
-        if (iconEnablersCache.containsKey(project)) {
-            return iconEnablersCache.get(project);
+    public static IconEnabler getInstance(@NotNull Project project) {
+        if (enablersCache.containsKey(project)) {
+            return enablersCache.get(project);
         }
-        GitSubmoduleFolderEnabler iconEnabler = new GitSubmoduleFolderEnabler();
-        iconEnablersCache.put(project, iconEnabler);
+        IconEnabler iconEnabler = new GitSubmoduleFolderEnabler();
+        enablersCache.put(project, iconEnabler);
         return iconEnabler;
     }
 
-    private synchronized void init(@NotNull Project project) {
+    @Override
+    public synchronized void init(@NotNull Project project) {
         long t1 = System.currentTimeMillis();
         submoduleFolders = findGitModulesFiles(project);
         initialized = true;
         long t2 = System.currentTimeMillis();
         lastInit = t2;
-        LOGGER.info("Initialized " + this.getClass().getSimpleName() + " for project " + project.getBasePath() + " in " + (t2 - t1) + " ms");
+        long execDuration = t2 - t1;
+        String logMsg = "Searched for git submodules in project " + project.getName() + " in " + execDuration + " ms." +
+            " Found git submodule folders: " + submoduleFolders;
+        if (execDuration > 4000) {
+            LOGGER.warn(logMsg + ". Operation should complete faster. " + ProjectUtils.PLEASE_OPEN_ISSUE_MSG);
+        } else {
+            LOGGER.info(logMsg);
+        }
     }
 
+    /** Find .gitmodules at root, then find every nested .gitmodules for every module (don't have to explore the whole project files). */
     private Set<String> findGitModulesFiles(@NotNull Project project) {
-        long t1 = System.currentTimeMillis();
         Set<String> submoduleFoldersFound = new HashSet<>();
         String basePath = project.getBasePath();
-        // find .gitmodules at root, then find every nested .gitmodules for every module (don't have to explore the whole project files)
         try {
             submoduleFoldersFound = GitSubmoduleUtils
                 .findGitSubmodules(basePath)
@@ -63,10 +71,6 @@ public class GitSubmoduleFolderEnabler implements IconEnabler {
             submoduleFoldersFound.addAll(findNestedGitModulesFiles(submoduleFoldersFound));
         } catch (FileNotFoundException e) {
             LOGGER.warn("Error while looking for git submodules", e);
-        }
-        long execTime = System.currentTimeMillis() - t1;
-        if (execTime > 100) {
-            LOGGER.warn("Found git submodules " + submoduleFoldersFound + " for project " + project + " in " + execTime + "ms (should be very fast)");
         }
         return submoduleFoldersFound;
     }
@@ -102,5 +106,10 @@ public class GitSubmoduleFolderEnabler implements IconEnabler {
             init(project);
         }
         return submoduleFolders.contains(absolutePathToVerify.toLowerCase());
+    }
+
+    @Override
+    public boolean terminatesConditionEvaluation() {
+        return true;
     }
 }

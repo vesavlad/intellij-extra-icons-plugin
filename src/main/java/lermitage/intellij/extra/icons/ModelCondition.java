@@ -10,6 +10,7 @@ import lermitage.intellij.extra.icons.enablers.IconEnabler;
 import lermitage.intellij.extra.icons.enablers.IconEnablerProvider;
 import lermitage.intellij.extra.icons.enablers.IconEnablerType;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Tag
 public class ModelCondition {
 
@@ -104,15 +104,20 @@ public class ModelCondition {
         this.iconEnablerType = iconEnablerType;
     }
 
-    public boolean check(String parentName, String fileName, Optional<String> fullPath, Set<String> prjFacets, Project project) {
+    public boolean check(String parentName, String fileName, @Nullable String fullPath, Set<String> prjFacets, Project project) {
         if (!enabled) {
             return false;
         }
 
-        if (hasIconEnabler && fullPath.isPresent()) {
+        if (hasIconEnabler && fullPath != null) {
             Optional<IconEnabler> iconEnabler = IconEnablerProvider.getIconEnabler(project, iconEnablerType);
             if (iconEnabler.isPresent()) {
-                return iconEnabler.get().verify(project, fullPath.get());
+                boolean iconEnabledVerified = iconEnabler.get().verify(project, fullPath);
+                if (!iconEnabledVerified) {
+                    return false;
+                } else if (iconEnabler.get().terminatesConditionEvaluation()) {
+                    return true;
+                }
             }
         }
 
@@ -142,11 +147,11 @@ public class ModelCondition {
             }
         }
 
-        if (hasRegex && fullPath.isPresent()) {
+        if (hasRegex && fullPath != null) {
             if (pattern == null) {
                 pattern = Pattern.compile(regex);
             }
-            if (pattern.matcher(fullPath.get()).matches()) {
+            if (pattern.matcher(fullPath).matches()) {
                 return true;
             }
         }

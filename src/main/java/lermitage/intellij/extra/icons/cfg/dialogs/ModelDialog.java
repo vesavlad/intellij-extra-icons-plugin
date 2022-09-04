@@ -15,8 +15,6 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.IconUtil;
-import lermitage.intellij.extra.icons.utils.AsyncUtils;
-import lermitage.intellij.extra.icons.utils.IconUtils;
 import lermitage.intellij.extra.icons.ExtraIconProvider;
 import lermitage.intellij.extra.icons.IconType;
 import lermitage.intellij.extra.icons.Model;
@@ -25,6 +23,8 @@ import lermitage.intellij.extra.icons.ModelType;
 import lermitage.intellij.extra.icons.cfg.SettingsForm;
 import lermitage.intellij.extra.icons.cfg.SettingsService;
 import lermitage.intellij.extra.icons.providers.Angular2IconProvider;
+import lermitage.intellij.extra.icons.utils.AsyncUtils;
+import lermitage.intellij.extra.icons.utils.IconUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
@@ -149,7 +149,7 @@ public class ModelDialog extends DialogWrapper {
             .sorted()
             .distinct()
             .forEach(iconPath -> chooseIconSelector.addItem(new BundledIcon(
-                iconPath, "bundled: " + iconPath.replace("/extra-icons/", ""))));
+                iconPath, "bundled: " + iconPath.replace("extra-icons/", ""))));
         ComboBoxRenderer renderer = new ComboBoxRenderer();
         // customIconImage
         chooseIconSelector.setRenderer(renderer);
@@ -202,7 +202,8 @@ public class ModelDialog extends DialogWrapper {
         Object selectedItem = typeComboBox.getSelectedItem();
         Model newModel;
         if (selectedItem != null && selectedItem.equals(ModelType.ICON.getFriendlyName())) {
-            newModel = new Model(modelIDField.isVisible() ? modelIDField.getText() : null,
+            newModel = Model.createIdeIconModel(
+                modelIDField.isVisible() ? modelIDField.getText() : null,
                 ideIconOverrideTextField.getText(),
                 icon,
                 descriptionField.getText(),
@@ -210,7 +211,8 @@ public class ModelDialog extends DialogWrapper {
                 iconType
             );
         } else {
-            newModel = new Model(modelIDField.isVisible() ? modelIDField.getText() : null,
+            newModel = Model.createFileOrFolderModel(
+                modelIDField.isVisible() ? modelIDField.getText() : null,
                 icon,
                 descriptionField.getText(),
                 ModelType.getByFriendlyName(Objects.requireNonNull(typeComboBox.getSelectedItem()).toString()),
@@ -247,7 +249,7 @@ public class ModelDialog extends DialogWrapper {
         if (model.getIconType() == IconType.PATH) {
             for (int itemIdx = 0; itemIdx < chooseIconSelector.getItemCount(); itemIdx++) {
                 Object item = chooseIconSelector.getItemAt(itemIdx);
-                if (item instanceof BundledIcon && ((BundledIcon)item).iconPath.equals(model.getIcon())) {
+                if (item instanceof BundledIcon && ((BundledIcon) item).iconPath.equals(model.getIcon())) {
                     chooseIconSelector.setSelectedIndex(itemIdx);
                     break;
                 }
