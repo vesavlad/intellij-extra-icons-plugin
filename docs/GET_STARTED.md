@@ -1,20 +1,20 @@
 # Get Started
 
-- How to configure the Extra Icons plugin
+- How to configure the Simple Icons plugin
   - [Enable and disable icons](#enable-and-disable-icons)
   - [Ignore file or folder patterns](#ignore-file-or-folder-patterns)
   - [Quick actions](#quick-actions)
   - [Add your own icons](#add-your-own-icons)
   - [Plugin configuration at the IDE level](#plugin-configuration-at-the-ide-level)
   - [Plugin configuration at the project level](#plugin-configuration-at-the-project-level)
-- How to use the Extra Icons plugin
+- How to use the Simple Icons plugin
   - [Icons customization by file or folder patterns](#icons-customization-by-file-or-folder-patterns)
   - [IDE icons customization](#ide-icons-customization)
   - [Git sub-modules detection](#git-sub-modules-detection)
 
-## How to configure the Extra Icons plugin
+## How to configure the Simple Icons plugin
 
-Go to <kbd>File</kbd>, <kbd>Settings...</kbd>, <kbd>Appearance & Behavior</kbd>, <kbd>Extra Icons</kbd>.
+Go to <kbd>File</kbd>, <kbd>Settings...</kbd>, <kbd>Appearance & Behavior</kbd>, <kbd>Simple Icons</kbd>.
 
 ### Enable and disable icons
 
@@ -63,7 +63,7 @@ Otherwise, use the dropdown menu to pick a bundled icon.
 
 Please note you can define multiple conditions. Your icon will be applied if at least one of the conditions is verified.
 
-Finally, you will select an icon. This icon can be located on your computer, otherwise you can reuse an icon that comes with Extra Icons:  
+Finally, you will select an icon. This icon can be located on your computer, otherwise you can reuse an icon that comes with Simple Icons:  
 ![Choose user icon](screenshots/get_started/add-user-icons-type.png)
 
 ### Plugin configuration at the IDE level
@@ -75,7 +75,7 @@ By default, configuration applies at IDE level and is shared with all projects.
 You can enable configuration at project level. It will optionally (there is a checkbox) override configuration at IDE level. Project level configuration applies to current project only.  
 ![Project level settings](screenshots/get_started/show-project-level-settings.png)
 
-## How to use the Extra Icons plugin
+## How to use the Simple Icons plugin
 
 ### Icons customization by file or folder patterns
 
@@ -84,7 +84,7 @@ Performance should be good, even on large projects.
 
 ### IDE icons customization
 
-Some icons are marked as _IDE icons_ in the icons list. That means these icons are not detected by file or folder patterns, but by ID. Every icon bundled with the IDE has an ID, and Extra Icons asks the IDE to override these icons by passing their ID.  
+Some icons are marked as _IDE icons_ in the icons list. That means these icons are not detected by file or folder patterns, but by ID. Every icon bundled with the IDE has an ID, and Simple Icons asks the IDE to override these icons by passing their ID.  
 IDE icons can be associated to a file type, a folder type, but they can also be GUI icons, like toolbar icons, menu icons, etc. Per example, with IDE icons, you can customize the Java Enum icon, the project folder icon, or the Run icon in the status bar and in the main toolbar.
 Please note that IDE icons customization takes effect **after IDE restart**. This is a limitation of the IDE.
 
@@ -95,4 +95,4 @@ If you want to add your own IDE icons overrides, you can find IDE icons and thei
 
 If your project defines some git sub-modules, their containing folders icon should be customized. It works with nested sub-modules as well. You should see beautiful Golden or Green Git icons.
 
-Please note sub-modules are detected on project loading (Extra Icons parses `.gitmodules` files only on project's load). If you checkout sub-modules after project's loading (in other words, if you create and populate sub-module folders), you will have to reload your project in order to see sub-module icons.
+Please note sub-modules are detected on project loading (Simple Icons parses `.gitmodules` files only on project's load). If you checkout sub-modules after project's loading (in other words, if you create and populate sub-module folders), you will have to reload your project in order to see sub-module icons.

@@ -8,7 +8,7 @@ As explained on the JetBrains marketplace, 12 months of uninterrupted subscripti
 
 Sure! Please follow [https://jetbrains.com/student/](https://jetbrains.com/student/) (students) or [https://jetbrains.com/buy/opensource/](https://jetbrains.com/buy/opensource/) (OSS developer) instructions. If you are facing issues, please contact JetBrains support directly. Unfortunately, I can do nothing, this is on the JetBrains side.
 
-Also, if you contributed to Extra Icons, please email me, or send a private message on Twitter (JLermitage): I have some coupons for free licenses for you.
+Also, if you contributed to Simple Icons, please email me, or send a private message on Twitter (JLermitage): I have some coupons for free licenses for you.
 
 ## I received a coupon for a free license, how does it work?
 
@@ -17,7 +17,7 @@ You can activate your coupons when you want, they have no expiration date.
 
 ## Will we have to pay for your [other plugins](https://plugins.jetbrains.com/author/ed9cc7eb-74f5-46c1-b0df-67162fe1a1c5)?
 
-I have no plan for that. I now have supporters thx to the Extra Icons project, and I am super happy with that. I don't provide OSS to make money, I already have a good job.
+I have no plan for that. I now have supporters thx to the Simple Icons project, and I am super happy with that. I don't provide OSS to make money, I already have a good job.
 
 ## Why a paid plugin?
 

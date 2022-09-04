@@ -1,14 +1,14 @@
 <idea-plugin require-restart="true">
-    <id>lermitage.intellij.extra.icons</id>
-    <name>Extra Icons</name>
+    <id>vvesa.intellij.extra.icons</id>
+    <name>Simple Icons</name>
     <version>REPLACED_BY_GRADLE</version>
-    <vendor email="jonathan@lermitage.biz" url="https://github.com/jonathanlermitage">JONATHAN_LERMITAGE</vendor>
+    <vendor email="vladvesa@outlook.com" url="https://github.com/vesavlad">VESA_VLAD</vendor>
 
     <description><![CDATA[
       <ul>
         <li>Adds 500+ icons for files like Travis YML, GitLab YML, Angular files, etc.</li>
         <li>Shows an icon for Git sub-module folders.</li>
-        <li>Configurable: see <i>File &gt; Settings &gt; Appearance &amp; Behavior &gt; Extra Icons</i> to select extra icons to (de)activate. This is configurable at IDE and project level.</li>
+        <li>Configurable: see <i>File &gt; Settings &gt; Appearance &amp; Behavior &gt; Simple Icons</i> to select simple icons to (de)activate. This is configurable at IDE and project level.</li>
         <li>You can also register your own icons in order to override file icons and all <a href="https://jetbrains.design/intellij/resources/icons_list/">IDE icons</a> (including toolbars, menus, etc.).</li>
         <li>For more information, please see this <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/docs/GET_STARTED.md">guide</a>.</li>
         <li>For questions about the plugin licensing model, how to get a license for free (students, teachers and OSS developers), and how to get a perpetual license, please see the <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/docs/LICENSE_FAQ.md">license FAQ</a>.</li>
@@ -26,7 +26,7 @@
     <change-notes><![CDATA[
     2022.1.10 (WIP)
     <ul>
-      <li>add an option in Extra Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance &amp; Behavior, Extra Icons, then hit the <i>Reload projects icons</i> button. Again, feel free to upvote <a href="https://youtrack.jetbrains.com/issue/IDEA-289822">IDEA-289822</a>, it would help.</li>
+      <li>add an option in Simple Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance &amp; Behavior, Simple Icons, then hit the <i>Reload projects icons</i> button. Again, feel free to upvote <a href="https://youtrack.jetbrains.com/issue/IDEA-289822">IDEA-289822</a>, it would help.</li>
       <li>add an alternative Dependabot icon.</li>
       <li>add an alternative Draw.io icon.</li>
       <li>add an alternative Helm icon.</li>
@@ -119,7 +119,7 @@
 
         <applicationConfigurable provider="lermitage.intellij.extra.icons.cfg.providers.IDEConfigurableProvider"
                                  id="LermitageExtraIcons"
-                                 displayName="Extra Icons" parentId="appearance"/>
+                                 displayName="Simple Icons" parentId="appearance"/>
         <projectConfigurable provider="lermitage.intellij.extra.icons.cfg.providers.ProjectConfigurableProvider"
                              id="LermitageExtraIcons-Project"
                              displayName="Project" parentId="LermitageExtraIcons"/>

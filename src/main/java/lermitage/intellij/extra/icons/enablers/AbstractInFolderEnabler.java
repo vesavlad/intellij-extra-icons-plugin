@@ -73,10 +73,10 @@ public abstract class AbstractInFolderEnabler implements IconEnabler {
                     "please restart your IDE. If it doesn't help, try to clear the file system cache and " +
                     "Local History (go to <i>File</i>, <i>Invalidate Caches...</i>).<br>" +
                     "📢 You can also wait until indexing is done, then go to <i>File</i>, <i>Settings</i>, <i>Appearance &amp; " +
-                    "Behavior</i>, <i>Extra Icons</i>, and hit the <b>Reload projects icons</b> button.<br><hr>" +
+                    "Behavior</i>, <i>Simple Icons</i>, and hit the <b>Reload projects icons</b> button.<br><hr>" +
                     "<b>It seems to be a JetBrains issue</b> (feel free to <b>upvote</b> " +
                     "https://youtrack.jetbrains.com/issue/IDEA-289822). Please do not open a new ticket for that.<br>" +
-                    "To disable this notification, please go to <i>File</i>, <i>Settings</i>, <i>Extra Icons</i>, and " +
+                    "To disable this notification, please go to <i>File</i>, <i>Settings</i>, <i>Simple Icons</i>, and " +
                     "check <b>Ignore plugin's warnings</b>.";
                 LOGGER.warn(msg, e);
                 if (!SettingsService.getIDEInstance().getIgnoreWarnings()) {

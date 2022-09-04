@@ -4,7 +4,7 @@
     <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons">
       <img src="./src/main/resources/META-INF/pluginIcon.svg" width="84" height="84" alt="logo"/>
     </a><br/>
-    Extra Icons
+    Simple Icons
 </h1>
 
 <p align="center">

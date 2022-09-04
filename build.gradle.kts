@@ -50,7 +50,7 @@ if (pluginVerifyProductDescriptor.toBoolean()) {
 
 logger.quiet("Will use IDEA $pluginIdeaVersion and Java $pluginJavaVersion. Plugin version set to $version.")
 
-group = "lermitage.intellij.extra.icons"
+group = "vvesa.intellij.extra.icons"
 
 repositories {
     mavenCentral()
@@ -78,7 +78,7 @@ dependencies {
 intellij {
     downloadSources.set(pluginDownloadIdeaSources.toBoolean() && !System.getenv().containsKey("CI"))
     instrumentCode.set(true)
-    pluginName.set("Extra Icons")
+    pluginName.set("Simple Icons")
     plugins.set(listOf("AngularJS"))
     sandboxDir.set("${rootProject.projectDir}/.idea-sandbox/${shortenIdeVersion(pluginIdeaVersion)}")
     updateSinceUntilBuild.set(false)

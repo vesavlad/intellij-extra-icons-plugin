@@ -1,7 +1,7 @@
-# Extra Icons Change Log
+# Simple Icons Change Log
 
 ## 2022.1.10 (WIP)
-* add an option in Extra Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance & Behavior, Extra Icons, then hit the `Reload projects icons` button. Again, feel free to upvote [**IDEA-289822**](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
+* add an option in Simple Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance & Behavior, Simple Icons, then hit the `Reload projects icons` button. Again, feel free to upvote [**IDEA-289822**](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
 * add an alternative Dependabot icon.
 * add an alternative Draw.io icon.
 * add an alternative Helm icon.
@@ -87,7 +87,7 @@
 * experimental: plugin updates don't require IDE restart. It will probably apply with next releases. You may still have to restart IDE, I can't test for now, but at least it should be totally safe.
 
 ## 2022.1.1 (2022/03/05)
-* **INFO**: Extra Icons is now a paid plugin: 5$ per year. Price decreases over time, and it's free for students, teachers and OSS developers. If you don't want to (or can't) support my work, feel free to use [previous releases](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/releases/tag/v1.69).
+* **INFO**: Simple Icons is now a paid plugin: 5$ per year. Price decreases over time, and it's free for students, teachers and OSS developers. If you don't want to (or can't) support my work, feel free to use [previous releases](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/releases/tag/v1.69).
 * add more alternative icons (popular web browsers) for HTML files.
 * override YAML icon.
 * override Bash file icon.
@@ -158,7 +158,7 @@
 * rework Storybook support: revert 1.61 patch and improve Storybook detection.
 
 ## 1.61.0 (2021/08/29)
-* improve support of Storybook: include `*.jsx` and `*.tsx` files. Warning: the TSX extension is already associated to _Typescript + React_ files. You can deactivate the unwanted association in Extra Icons settings (tip: filter the icons table with "tsx", then disable _Storybook TSX_ or _Typescript + React_).
+* improve support of Storybook: include `*.jsx` and `*.tsx` files. Warning: the TSX extension is already associated to _Typescript + React_ files. You can deactivate the unwanted association in Simple Icons settings (tip: filter the icons table with "tsx", then disable _Storybook TSX_ or _Typescript + React_).
 * support [Screwdriver](https://docs.screwdriver.cd) `screwdriver.yaml` files.
 * support JPA Buddy `.jpb` folders.
 * rework a README icon (PNG icon to SVG).
@@ -259,7 +259,7 @@ Thx [Alan Bouteiller](https://github.com/bouteillerAlan) for his contributions:
 
 ## 1.46.0 (2021/02/07)
 * support `.env` files.
-* force IDE to restart when installing or upgrading Extra Icons plugin: there may be a bug with [Dynamic Plugins](https://plugins.jetbrains.com/docs/intellij/dynamic-plugins.html). I hope it will fix [#44](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/44): some settings were lost when hot-reloading plugin (upgrade without restart).
+* force IDE to restart when installing or upgrading Simple Icons plugin: there may be a bug with [Dynamic Plugins](https://plugins.jetbrains.com/docs/intellij/dynamic-plugins.html). I hope it will fix [#44](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/44): some settings were lost when hot-reloading plugin (upgrade without restart).
 
 ## 1.45.1 (2021/02/02)
 * fix a NPE that may occur when multiple projects are opened and icons are being refreshed.
@@ -479,7 +479,7 @@ Some icons come from the [Hiberbee Theme family](https://github.com/hiberbee/jet
 * restore missing Angular icon.
 
 ## 1.20.1 (2020/02/26)
-* fix [issue 26](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/26): can't open the Extra Icons settings if Angular plugin is disabled (or not installed, so IJ Community was affected too). Thx contributors!
+* fix [issue 26](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/26): can't open the Simple Icons settings if Angular plugin is disabled (or not installed, so IJ Community was affected too). Thx contributors!
 
 ## 1.20.0 (2020/02/21)
 * user can now add custom icons, path ignore regex now works on relative path to project base dir. Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/pull/21).
@@ -602,12 +602,12 @@ Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-pl
 * add plugin's icon (effective with 2019.1 IDE).
 
 ## 1.0.0 (2019/04/01)
-* add a graphical config panel to select extra icons to (de)activate. See `Settings > Appearance & Behavior > Extra Icons`.
+* add a graphical config panel to select simple icons to (de)activate. See `Settings > Appearance & Behavior > Simple Icons`.
 * changed version numbers: `x.y.z.173` plugins are compatible with 173.0+ IDE builds (2017.3 and newer), `x.y.z.183` plugins are compatible with 183.0+ IDE builds (2018.3 and newer) and provide some additional icons.
 
 ## 0.27 and 0.28 (2019/03/29)
 * support `*.http` files (requests to be played by IntelliJ HTTP client).
-* plugin's configuration: you can now select extra icons to deactivate via a config file. A future release will bring a graphical config panel (but contributions are welcome!).
+* plugin's configuration: you can now select simple icons to deactivate via a config file. A future release will bring a graphical config panel (but contributions are welcome!).
 
 ## 0.25 and 0.26 (2019/02/17)
 * fixed ArchUnit files detection.
@@ -630,7 +630,7 @@ Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-pl
 
 ## 0.19 and 0.20 (2018/12/21)
 * starting from 0.19, there are two builds:
-  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundle features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Extra Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
+  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundle features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Simple Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
   * even minor revision number (0.20, 0.22, 1.0, 1.2...): compatible with latest IDE builds (183.0, aka 2018.3).
   
 This way, you simply have to download the latest version offered by the plugin manager: on older IDE, you'll get the latest odd minor revision number. On recent IDE, you get the latest even minor revision number that sheeps same features as odd version, plus features that comes with recent IDE builds.

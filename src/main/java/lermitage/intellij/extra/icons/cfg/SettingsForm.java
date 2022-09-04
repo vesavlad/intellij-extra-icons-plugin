@@ -125,7 +125,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return "Extra Icons";
+        return "Simple Icons";
     }
 
     @Nullable

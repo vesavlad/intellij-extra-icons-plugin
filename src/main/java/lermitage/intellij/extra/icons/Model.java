@@ -41,7 +41,7 @@ public class Model {
     @XCollection
     private List<ModelCondition> conditions = new ArrayList<>(Collections.singletonList(new ModelCondition()));
 
-    /** Alternative icons. Extra Icons will automatically generate alt icons (and ids, names, etc.) based on on this list. */
+    /** Alternative icons. Simple Icons will automatically generate alt icons (and ids, names, etc.) based on on this list. */
     private String[] altIcons;
 
     /** Tags associated to this model. Used to easily (de)activate models linked to specific tags. */
