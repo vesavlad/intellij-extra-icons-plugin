@@ -4,8 +4,9 @@ import com.github.benmanes.gradle.versions.reporter.result.Result
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.palantir.gradle.gitversion.VersionDetails
 import groovy.lang.Closure
+import org.apache.commons.io.FileUtils
+import org.jetbrains.changelog.Changelog
 import org.jetbrains.intellij.tasks.RunPluginVerifierTask
-import java.io.StringWriter
 import java.util.EnumSet
 
 fun properties(key: String) = project.findProperty(key).toString()
@@ -13,8 +14,9 @@ fun properties(key: String) = project.findProperty(key).toString()
 plugins {
     id("java")
     id("jacoco")
-    id("org.jetbrains.intellij") version "1.9.0" // https://github.com/JetBrains/gradle-intellij-plugin https://lp.jetbrains.com/gradle-intellij-plugin/
-    id("com.github.ben-manes.versions") version "0.42.0" // https://github.com/ben-manes/gradle-versions-plugin
+    id("org.jetbrains.intellij") version "1.12.0" // https://github.com/JetBrains/gradle-intellij-plugin
+    id("org.jetbrains.changelog") version "2.0.0" // https://github.com/JetBrains/gradle-changelog-plugin
+    id("com.github.ben-manes.versions") version "0.45.0" // https://github.com/ben-manes/gradle-versions-plugin
     id("com.adarshr.test-logger") version "3.2.0" // https://github.com/radarsh/gradle-test-logger-plugin
     id("com.jaredsburrows.license") version "0.9.0" // https://github.com/jaredsburrows/gradle-license-plugin
     id("com.osacky.doctor") version "0.8.1" // https://github.com/runningcode/gradle-doctor/
@@ -22,12 +24,17 @@ plugins {
     id("biz.lermitage.oga") version "1.1.1"
 }
 
+val pluginXmlFile = projectDir.resolve("src/main/resources/META-INF/plugin.xml")
+val pluginXmlFileBackup = projectDir.resolve("src/main/resources/META-INF/plugin.original.xml")
+
 // Import variables from gradle.properties file
 val pluginIdeaVersion: String by project
 val pluginDownloadIdeaSources: String by project
 val pluginVersion: String by project
 val pluginJavaVersion: String by project
 val pluginVerifyProductDescriptor: String by project
+val testLoggerStyle: String by project
+val pluginNeedsLicense: String by project
 
 version = if (pluginVersion == "auto") {
     val versionDetails: Closure<VersionDetails> by extra
@@ -41,13 +48,6 @@ version = if (pluginVersion == "auto") {
     pluginVersion
 }
 
-if (pluginVerifyProductDescriptor.toBoolean()) {
-    val pluginXmlStr = projectDir.resolve("src/main/resources/META-INF/plugin.xml").readText()
-    if (!pluginXmlStr.contains("<product-descriptor")) {
-        throw GradleException("plugin.xml: Product Descriptor is missing")
-    }
-}
-
 logger.quiet("Will use IDEA $pluginIdeaVersion and Java $pluginJavaVersion. Plugin version set to $version.")
 
 group = "vvesa.intellij.extra.icons"
@@ -56,41 +56,87 @@ repositories {
     mavenCentral()
 }
 
-val failsafe = "3.2.4"
-val twelvemonkeysVersion = "3.8.3"
-val junitVersion = "5.9.0"
+val twelvemonkeysVersion = "3.9.4"
+val junitVersion = "5.9.2"
+val junitPlatformLauncher = "1.9.2"
 
 dependencies {
-    implementation("dev.failsafe:failsafe:$failsafe") // Retry support https://failsafe.dev/retry/
     implementation("com.twelvemonkeys.imageio:imageio-core:$twelvemonkeysVersion") // https://github.com/haraldk/TwelveMonkeys/releases
-    // TODO Apache Batik is bundled with IJ and IJ-based IDEs (tested with PyCharm Community). If needed, see how to
-    //  integrate org.apache.xmlgraphics:batik-all:1.14 without failing to load org.apache.batik.anim.dom.SAXSVGDocumentFactory
     implementation("com.twelvemonkeys.imageio:imageio-batik:$twelvemonkeysVersion") // SVG support
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-
-    // TODO check JUnit and Gradle updates and remove this workaround asap
-    // gradle 7.5 + JUnit workaround for NoClassDefFoundError: org/junit/platform/launcher/LauncherSessionListener
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformLauncher")
 }
 
 intellij {
     downloadSources.set(pluginDownloadIdeaSources.toBoolean() && !System.getenv().containsKey("CI"))
     instrumentCode.set(true)
     pluginName.set("Simple Icons")
-    plugins.set(listOf("AngularJS"))
     sandboxDir.set("${rootProject.projectDir}/.idea-sandbox/${shortenIdeVersion(pluginIdeaVersion)}")
     updateSinceUntilBuild.set(false)
     version.set(pluginIdeaVersion)
 }
 
+changelog {
+    headerParserRegex.set("(.*)".toRegex())
+    itemPrefix.set("*")
+}
+
 testlogger {
-    theme = ThemeType.PLAIN
+    try {
+        theme = ThemeType.valueOf(testLoggerStyle)
+    } catch (e: Exception) {
+        theme = ThemeType.PLAIN
+        logger.warn("Invalid testLoggerRichStyle value '$testLoggerStyle', " +
+            "will use PLAIN style instead. Accepted values are PLAIN, STANDARD and MOCHA.")
+    }
     showSimpleNames = true
 }
 
 tasks {
+    register("verifyProductDescriptor") {
+        // Ensure generated plugin requires a paid license
+        doLast {
+            val pluginXmlStr = pluginXmlFile.readText()
+            if (!pluginXmlStr.contains("<product-descriptor")) {
+                throw GradleException("plugin.xml: Product Descriptor is missing")
+            }
+        }
+    }
+    register("removeLicenseRestrictionFromPluginXml") {
+        // Remove paid license requirement
+        doLast {
+            logger.warn("----------------------------------------------------------------")
+            logger.warn("/!\\ Will build a plugin which doesn't ask for a paid license /!\\")
+            logger.warn("----------------------------------------------------------------")
+            var pluginXmlStr = pluginXmlFile.readText()
+            pluginXmlStr = pluginXmlStr.replace(Regex(
+                "<product-descriptor code=\"PEXTRAICONS\" release-date=\"\\d+\" release-version=\"\\d+\"/>"),
+                "")
+            pluginXmlFileBackup.delete()
+            FileUtils.moveFile(pluginXmlFile, pluginXmlFileBackup)
+            FileUtils.write(pluginXmlFile, pluginXmlStr, "UTF-8")
+            logger.debug("Saved a copy of $pluginXmlFile to $pluginXmlFileBackup")
+        }
+    }
+    register("restorePluginXml") {
+        // Task removeLicenseRestrictionFromPluginXml worked with a modified version of plugin.xml file -> restore original file
+        doLast {
+            FileUtils.copyFile(pluginXmlFileBackup, pluginXmlFile)
+            pluginXmlFileBackup.delete()
+            logger.debug("Restored original $pluginXmlFile from $pluginXmlFileBackup")
+        }
+    }
+    register("renameDistributionNoLicense") {
+        // Rename generated plugin file to mention the fact that no paid license is needed
+        doLast {
+            val baseName = "build/distributions/Extra Icons-$version"
+            val noLicFile = projectDir.resolve("${baseName}-no-license.zip")
+            noLicFile.delete()
+            FileUtils.moveFile(projectDir.resolve("${baseName}.zip"), noLicFile)
+        }
+    }
     withType<JavaCompile> {
         sourceCompatibility = pluginJavaVersion
         targetCompatibility = pluginJavaVersion
@@ -99,12 +145,6 @@ tasks {
     }
     withType<Test> {
         useJUnitPlatform()
-
-        // TODO check JUnit and Gradle updates and remove this workaround asap
-        // gradle 7.5 + JUnit workaround https://docs.gradle.org/7.5/userguide/upgrading_version_7.html#removes_implicit_add_opens_for_test_workers
-        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-        jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
-        jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
     }
     jacocoTestReport {
         reports {
@@ -118,27 +158,16 @@ tasks {
         checkForGradleUpdate = true
         gradleReleaseChannel = "current"
         revision = "release"
-        resolutionStrategy {
-            componentSelection {
-                all {
-                    if (isNonStable(candidate.version)) {
-                        logger.debug(" - [ ] ${candidate.module}:${candidate.version} candidate rejected")
-                        reject("Not stable")
-                    } else {
-                        logger.debug(" - [X] ${candidate.module}:${candidate.version} candidate accepted")
-                    }
-                }
-            }
+        rejectVersionIf {
+            isNonStable(candidate.version)
         }
         outputFormatter = closureOf<Result> {
             unresolved.dependencies.removeIf {
                 val coordinates = "${it.group}:${it.name}"
                 coordinates.startsWith("unzipped.com") || coordinates.startsWith("com.jetbrains:ideaI")
             }
-            val plainTextReporter = PlainTextReporter(project, revision, gradleReleaseChannel)
-            val writer = StringWriter()
-            plainTextReporter.write(writer, this)
-            logger.quiet(writer.toString().trim())
+            PlainTextReporter(project, revision, gradleReleaseChannel)
+                .write(System.out, this)
         }
     }
     runIde {
@@ -167,6 +196,25 @@ tasks {
     }
     buildSearchableOptions {
         enabled = false
+    }
+    patchPluginXml {
+        if (!pluginNeedsLicense.toBoolean()) {
+            dependsOn("removeLicenseRestrictionFromPluginXml")
+        } else {
+            if (pluginVerifyProductDescriptor.toBoolean()) {
+                dependsOn("verifyProductDescriptor")
+            }
+        }
+        changeNotes.set(provider {
+            with(changelog) {
+                renderItem(getLatest(), Changelog.OutputType.HTML)
+            }
+        })
+    }
+    buildPlugin {
+        if (!pluginNeedsLicense.toBoolean()) {
+            finalizedBy("restorePluginXml", "renameDistributionNoLicense")
+        }
     }
 }
 

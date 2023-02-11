@@ -1,10 +1,51 @@
-# Simple Icons Change Log
+# Extra Icons Change Log
 
-## 2022.1.10 (WIP)
-* add an option in Simple Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance & Behavior, Simple Icons, then hit the `Reload projects icons` button. Again, feel free to upvote [**IDEA-289822**](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
+## 2023.1.1 (planned for 2023/02/11)
+* minor UI improvement in settings panel: add icons to _Enable all... / Disable all..._ combobox items.
+* minor UI improvement in Model dialog: hide tester's input label when type is set to IDE icon.
+* rework JUnit5 icon (PNG icon to SVG), and add an alternative icon.
+* rework LibreOffice icons (PNG icons to SVG). Also added LibreOffice 7.5 [new icons](https://wiki.documentfoundation.org/ReleaseNotes/7.5#Design).
+* add alternative icons for MS Office Word, Excel and PowerPoint files.
+* add an alternative icon for CSV files.
+* add an alternative icon for KeePass files.
+
+## 2023.1 (2023/01/21)
+* settings: rework the icon which indicates if an IDE restart is needed.
+* internal: clear ExtraIcons internal caches associated to closed projects. It should reduce memory usage (a little).
+* internal: important code rework and refactoring, avoid some possible errors.
+* support Kustomize `kustomization.yaml` files.
+* remove Better Code Hub icons as [Better Code Hub has closed on December 31st 2022](https://github.com/marketplace/better-code-hub).
+
+## 2022.1.14 (2022/12/04)
+* [try to mitigate #114](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/114) PHPStorm freezes for a few seconds several times. The JetBrains Angular plugin may cause high CPU usage. Removed usage of the (optional) Angular plugin which was used to detect Angular projects. Angular projects are still detected by using the IDE filename index, so you should still see Angular icons. Unfortunately, you may still experience some IDE freezes: this is an issue with the Angular plugin itself. It seems to be [fixed](https://youtrack.jetbrains.com/issue/WEB-57461) in IntelliJ 2022.3 RC, so you may want to wait for the 2022.3 final release of your IDE, or temporarily disable the Angular plugin.
+* internal: upgrade TwelveMonkeys library to 3.9.4 (used to preview and resize PNG icons).
+* fix usage of a deprecated API in order to improve compatibility with future 2023 IDEs.
+* improve Angular and JS/TS test icons.
+
+## 2022.1.13 (2022/11/11)
+* set minimal IDE version to 2022.1 and fix usage of a deprecated API used to query IDE filename index.
+* [fix #113](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/113) can't load custom icons from local drive on Windows.
+* internal: upgrade TwelveMonkeys library to 3.9.3 (used to preview and resize PNG icons).
+
+## 2022.1.12 (2022/10/15)
+* add graphql-resolver, Rego and Mongodb icons. Improve frameworks detection mechanism. Thx to contributor **fcannizzaro**.
+* I'm working on tooling and preparing the support for the 2023 IDEs. That's why this changelog will probably be a bit poor until next year. Meanwhile, bugfixes remain my priority, so don't hesitate to raise issues.
+
+## 2022.1.11 (2022/09/16)
+* [feat #110](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/110) config panel: add a text input field to test the conditions for User icons.
+* [fix #111](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/111) slow operations are prohibited on EDT.
+* config panel: minor UI improvements in Plugin icons list.
+* fix possible NPE when updating User icons conditions list.
+* I think IDE filename index issues are gone! Sorry for this annoying issue, it made me crazy. Big thanks to [Andreas Perhab](https://youtrack.jetbrains.com/issue/IDEA-291382/Assertion-failed-at-VirtualDirectoryImpldoFindChildById#focus=Comments-27-6445738.0-0), who found a solution using an Index Listener. Some explanations: we are not allowed to query the index during indexing. Extra Icons plugin needs to query the index in order to locate some files (for Angular and Helm support) and, unfortunately, the IDE seems to try to update icons (which invokes Extra Icons plugin, which tries to query the index) during indexing. This is not new, but it's more frequent since IJ 2022. Starting from now, we will silent this error, and we query the index a second time, once indexing tasks completed.
+
+## 2022.1.10 (2022/09/05)
+* add an option in Extra Icons settings in order to force icons reloading on demand. Use it if you still see errors when querying IDE filename index: wait until indexing is done, go to File, Settings, Appearance & Behavior, Extra Icons, then hit the `Reload projects icons` button. Again, feel free to upvote [IDEA-289822](https://youtrack.jetbrains.com/issue/IDEA-289822), it would help.
 * add an alternative Dependabot icon.
 * add an alternative Draw.io icon.
 * add an alternative Helm icon.
+* add an alternative HTTP icon.
+* support [YANG](https://network.developer.nokia.com/sr/learn/yang/understanding-yang/) files.
+* rework some Docker icons, and fix a Docker Ignore dark icon.
 * improve icons reloading on config change.
 
 ## 2022.1.9 (2022/08/27)
@@ -87,7 +128,7 @@
 * experimental: plugin updates don't require IDE restart. It will probably apply with next releases. You may still have to restart IDE, I can't test for now, but at least it should be totally safe.
 
 ## 2022.1.1 (2022/03/05)
-* **INFO**: Simple Icons is now a paid plugin: 5$ per year. Price decreases over time, and it's free for students, teachers and OSS developers. If you don't want to (or can't) support my work, feel free to use [previous releases](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/releases/tag/v1.69).
+* **INFO**: Extra Icons is now a paid plugin: 5$ per year. Price decreases over time, and it's free for students, teachers and OSS developers. If you don't want to (or can't) support my work, feel free to use [previous releases](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/releases/tag/v1.69).
 * add more alternative icons (popular web browsers) for HTML files.
 * override YAML icon.
 * override Bash file icon.
@@ -158,7 +199,7 @@
 * rework Storybook support: revert 1.61 patch and improve Storybook detection.
 
 ## 1.61.0 (2021/08/29)
-* improve support of Storybook: include `*.jsx` and `*.tsx` files. Warning: the TSX extension is already associated to _Typescript + React_ files. You can deactivate the unwanted association in Simple Icons settings (tip: filter the icons table with "tsx", then disable _Storybook TSX_ or _Typescript + React_).
+* improve support of Storybook: include `*.jsx` and `*.tsx` files. Warning: the TSX extension is already associated to _Typescript + React_ files. You can deactivate the unwanted association in Extra Icons settings (tip: filter the icons table with "tsx", then disable _Storybook TSX_ or _Typescript + React_).
 * support [Screwdriver](https://docs.screwdriver.cd) `screwdriver.yaml` files.
 * support JPA Buddy `.jpb` folders.
 * rework a README icon (PNG icon to SVG).
@@ -259,7 +300,7 @@ Thx [Alan Bouteiller](https://github.com/bouteillerAlan) for his contributions:
 
 ## 1.46.0 (2021/02/07)
 * support `.env` files.
-* force IDE to restart when installing or upgrading Simple Icons plugin: there may be a bug with [Dynamic Plugins](https://plugins.jetbrains.com/docs/intellij/dynamic-plugins.html). I hope it will fix [#44](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/44): some settings were lost when hot-reloading plugin (upgrade without restart).
+* force IDE to restart when installing or upgrading Extra Icons plugin: there may be a bug with [Dynamic Plugins](https://plugins.jetbrains.com/docs/intellij/dynamic-plugins.html). I hope it will fix [#44](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/44): some settings were lost when hot-reloading plugin (upgrade without restart).
 
 ## 1.45.1 (2021/02/02)
 * fix a NPE that may occur when multiple projects are opened and icons are being refreshed.
@@ -479,7 +520,7 @@ Some icons come from the [Hiberbee Theme family](https://github.com/hiberbee/jet
 * restore missing Angular icon.
 
 ## 1.20.1 (2020/02/26)
-* fix [issue 26](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/26): can't open the Simple Icons settings if Angular plugin is disabled (or not installed, so IJ Community was affected too). Thx contributors!
+* fix [issue 26](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues/26): can't open the Extra Icons settings if Angular plugin is disabled (or not installed, so IJ Community was affected too). Thx contributors!
 
 ## 1.20.0 (2020/02/21)
 * user can now add custom icons, path ignore regex now works on relative path to project base dir. Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/pull/21).
@@ -602,12 +643,12 @@ Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-pl
 * add plugin's icon (effective with 2019.1 IDE).
 
 ## 1.0.0 (2019/04/01)
-* add a graphical config panel to select simple icons to (de)activate. See `Settings > Appearance & Behavior > Simple Icons`.
+* add a graphical config panel to select extra icons to (de)activate. See `Settings > Appearance & Behavior > Extra Icons`.
 * changed version numbers: `x.y.z.173` plugins are compatible with 173.0+ IDE builds (2017.3 and newer), `x.y.z.183` plugins are compatible with 183.0+ IDE builds (2018.3 and newer) and provide some additional icons.
 
 ## 0.27 and 0.28 (2019/03/29)
 * support `*.http` files (requests to be played by IntelliJ HTTP client).
-* plugin's configuration: you can now select simple icons to deactivate via a config file. A future release will bring a graphical config panel (but contributions are welcome!).
+* plugin's configuration: you can now select extra icons to deactivate via a config file. A future release will bring a graphical config panel (but contributions are welcome!).
 
 ## 0.25 and 0.26 (2019/02/17)
 * fixed ArchUnit files detection.
@@ -630,7 +671,7 @@ Thx [Florian Böhm](https://github.com/jonathanlermitage/intellij-extra-icons-pl
 
 ## 0.19 and 0.20 (2018/12/21)
 * starting from 0.19, there are two builds:
-  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundle features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Simple Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
+  * odd minor revision number (0.19, 0.21, 1.1, 1.3...): compatible with 173.0 IDE builds (aka 2017.3). This build doesn't bundle features that need 2018.3 IDE builds: AngularJS, SASS, Javascript. They're excluded because Extra Icons plugin reads project's type in order to activate some file recognition (AngularJS, SASS, Javascrip): it is based on 2018.3 IDE features. Other files detection is simply based on files pattern, that's why it works with older IDE builds, and I will maintain a branch (`ide173`) to keep support.
   * even minor revision number (0.20, 0.22, 1.0, 1.2...): compatible with latest IDE builds (183.0, aka 2018.3).
   
 This way, you simply have to download the latest version offered by the plugin manager: on older IDE, you'll get the latest odd minor revision number. On recent IDE, you get the latest even minor revision number that sheeps same features as odd version, plus features that comes with recent IDE builds.

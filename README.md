@@ -8,14 +8,10 @@
 </h1>
 
 <p align="center">
-    <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img src="https://img.shields.io/jetbrains/plugin/v/11058-extra-icons.svg"/></a>
-    <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img src="https://img.shields.io/jetbrains/plugin/d/11058-extra-icons.svg"/></a>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/vesavlad/intellij-extra-icons-plugin.svg"/></a>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/graphs/contributors"><img src="https://img.shields.io/github/contributors/vesavlad/intellij-extra-icons-plugin"/></a><br>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Build/badge.svg"/></a>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Compatibility/badge.svg"/></a><br>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Build+EAP%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Build%20EAP/badge.svg"/></a>
-    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/actions?query=workflow%3A%22Compatibility+EAP%22"><img src="https://github.com/vesavlad/intellij-extra-icons-plugin/workflows/Compatibility%20EAP/badge.svg"/></a>
+    <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img alt="plugin's version" src="https://img.shields.io/jetbrains/plugin/v/11058-extra-icons.svg"/></a>
+    <a href="https://plugins.jetbrains.com/plugin/11058-extra-icons"><img alt="plugin's downloads" src="https://img.shields.io/jetbrains/plugin/d/11058-extra-icons.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/blob/master/LICENSE.txt"><img alt="plugin's license" src="https://img.shields.io/github/license/jonathanlermitage/intellij-extra-icons-plugin.svg"/></a>
+    <a href="https://github.com/vesavlad/intellij-extra-icons-plugin/graphs/contributors"><img alt="number of contributors" src="https://img.shields.io/github/contributors/jonathanlermitage/intellij-extra-icons-plugin"/></a><br>
 </p>
 
 Intellij IDEA (Community and Ultimate) plugin that adds icons for files like Travis YML, Appveyor YML, Git sub-modules, etc.  
@@ -59,6 +55,8 @@ Optionally, you may want to install SVGO in order to optimize SVG icons. Install
 ## How to contribute
 
 Please see [CONTRIBUTION.md](CONTRIBUTION.md).
+
+Nota: you can test icons with this [sample project](https://github.com/jonathanlermitage/intellij-extra-icons-plugin/tree/sample-project). This is a project with many empty files. It will help you to verify icon overrides.
 
 ## Known issues
 

@@ -4,11 +4,16 @@
 
 As explained on the JetBrains marketplace, 12 months of uninterrupted subscription payments qualify you for receiving a [perpetual fallback license](https://sales.jetbrains.com/hc/en-gb/articles/207240845-What-is-perpetual-fallback-license).
 
-## I am a student or an OSS developer, can I get a license for free?
+## I am a student or a teacher, can I get a license for free?
 
-Sure! Please follow [https://jetbrains.com/student/](https://jetbrains.com/student/) (students) or [https://jetbrains.com/buy/opensource/](https://jetbrains.com/buy/opensource/) (OSS developer) instructions. If you are facing issues, please contact JetBrains support directly. Unfortunately, I can do nothing, this is on the JetBrains side.
+Sure! Please register with [https://jetbrains.com/student/](https://jetbrains.com/student/), then follow [these instructions](https://plugins.jetbrains.com/docs/marketplace/community-programs.html). If you are facing issues, please contact JetBrains support directly. Unfortunately, I can do nothing, this is on the JetBrains side.
 
 Also, if you contributed to Simple Icons, please email me, or send a private message on Twitter (JLermitage): I have some coupons for free licenses for you.
+
+## I am an OSS developer, can I get a license for free?
+
+I'm sorry, but I noticed that many OSS accounts were totally fake. I mean, many people simply create (or duplicate) a project with a few lines of codes, then they ask for an OSS free license.  
+As of 2022-11-14, I no longer offer licenses for OSS developers. Instead, I donate to some open source projects (~1000 USD this year).
 
 ## I received a coupon for a free license, how does it work?
 

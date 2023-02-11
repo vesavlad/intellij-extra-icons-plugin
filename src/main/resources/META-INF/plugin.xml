@@ -11,8 +11,14 @@
         <li>Configurable: see <i>File &gt; Settings &gt; Appearance &amp; Behavior &gt; Simple Icons</i> to select simple icons to (de)activate. This is configurable at IDE and project level.</li>
         <li>You can also register your own icons in order to override file icons and all <a href="https://jetbrains.design/intellij/resources/icons_list/">IDE icons</a> (including toolbars, menus, etc.).</li>
         <li>For more information, please see this <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/docs/GET_STARTED.md">guide</a>.</li>
-        <li>For questions about the plugin licensing model, how to get a license for free (students, teachers and OSS developers), and how to get a perpetual license, please see the <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/docs/LICENSE_FAQ.md">license FAQ</a>.</li>
+        <li>For questions about the plugin licensing model, how to get a license for free (students and teachers), and how to get a perpetual license, please see the <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/blob/master/docs/LICENSE_FAQ.md">license FAQ</a>.</li>
       </ul>
+      📢 Please don't trust the plugin's low rating. It had ~5 stars until I decided to ask for modest financial support starting from March 2022.
+      Some narrow-minded people organized a review-bombing against my plugin (and sent me very aggressive emails, sometimes death threats;
+      seriously... they're crazy), which is why you see many 1-star ratings. JetBrains support accepted to remove most of the toxic reviews,
+      but unfortunately, they refused to remove the 1-star ratings...<br>
+      If you want to help plugin developers, please consider <a href="https://youtrack.jetbrains.com/issue/MP-4248">up-voting YouTrack issue MP-4248</a>. Thank you!
+      <br>
       <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin">GitHub</a> | <a href="https://github.com/jonathanlermitage/intellij-extra-icons-plugin/issues">Issues</a> | <a href="https://www.linkedin.com/in/jonathan-lermitage/">LinkedIn</a> | <a href="https://vshymanskyy.github.io/StandWithUkraine/">💙 Help Ukraine 💛</a>
     ]]>
     </description>
@@ -79,8 +85,7 @@
     </change-notes>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
-    <!-- use 211.7628.21 (2021.1.3) because bug IDEA-262732 (plugin's hot reload deletes its settings) is fixed in 2021.1.3 -->
-    <idea-version since-build="211.7628.21"/>
+    <idea-version since-build="221.6008.13"/> <!-- 2022.1.4 -->
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html#modules-available-in-all-products
          on how to target different products -->
@@ -100,22 +105,22 @@
         <!--suppress PluginXmlValidity (can't find third-party plugins, but it's OK) -->
         <fileIconProvider
             id="genericFileIconProvider"
-            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes"
+            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes, before tech.pantheon.yanginator, before com.intellij.kubernetes"
             implementation="lermitage.intellij.extra.icons.ExtraIconProvider"/>
         <!--suppress PluginXmlValidity (can't find third-party plugins, but it's OK) -->
         <iconProvider
             id="extraIconsIconProvider"
-            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes"
+            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes, before tech.pantheon.yanginator, before com.intellij.kubernetes"
             implementation="lermitage.intellij.extra.icons.ExtraIconProvider"/>
         <!--suppress PluginXmlValidity (can't find third-party plugins, but it's OK) -->
         <openapi.vcs.changes.ui.filePathIconProvider
             id="extraIconsFilePathIconProvider"
-            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes"
+            order="first, before amailp.intellij.robot, before com.vladsch.idea.multimarkdown, before com.hiberbee.intellij.hiberbee-theme, before nb-mind-map-idea, before mdx.js, before com.intellij.kubernetes, before tech.pantheon.yanginator, before com.intellij.kubernetes"
             implementation="lermitage.intellij.extra.icons.ExtraIconProvider"/>
         <applicationService
-            serviceImplementation="lermitage.intellij.extra.icons.cfg.services.impl.SettingsIDEService"/>
+            serviceImplementation="lermitage.intellij.extra.icons.cfg.services.SettingsIDEService"/>
         <projectService
-            serviceImplementation="lermitage.intellij.extra.icons.cfg.services.impl.SettingsProjectService"/>
+            serviceImplementation="lermitage.intellij.extra.icons.cfg.services.SettingsProjectService"/>
 
         <applicationConfigurable provider="lermitage.intellij.extra.icons.cfg.providers.IDEConfigurableProvider"
                                  id="LermitageExtraIcons"
@@ -125,16 +130,5 @@
                              displayName="Project" parentId="LermitageExtraIcons"/>
         <notificationGroup id="ExtraIcons" displayType="BALLOON"/>
     </extensions>
-
-    <!--
-      IMPORTANT To override test-files icons the icon provider must be ordered as "first".
-       In this particular case I ordered first both the Javascript one and the Angular2+ one.
-       That's because both define a test-related icon and the order can be undefined between each other.
-    -->
-    <depends optional="true" config-file="angular2.xml">AngularJS</depends>
-
-    <actions>
-        <!-- Add your actions here -->
-    </actions>
 
 </idea-plugin>

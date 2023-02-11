@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.ToolbarDecorator;
@@ -20,8 +21,11 @@ import lermitage.intellij.extra.icons.ModelType;
 import lermitage.intellij.extra.icons.cfg.dialogs.ModelDialog;
 import lermitage.intellij.extra.icons.cfg.models.PluginIconsSettingsTableModel;
 import lermitage.intellij.extra.icons.cfg.models.UserIconsSettingsTableModel;
-import lermitage.intellij.extra.icons.cfg.services.impl.SettingsProjectService;
+import lermitage.intellij.extra.icons.cfg.services.SettingsProjectService;
+import lermitage.intellij.extra.icons.cfg.services.SettingsService;
 import lermitage.intellij.extra.icons.enablers.EnablerUtils;
+import lermitage.intellij.extra.icons.utils.ComboBoxWithImageItem;
+import lermitage.intellij.extra.icons.utils.ComboBoxWithImageRenderer;
 import lermitage.intellij.extra.icons.utils.IconUtils;
 import lermitage.intellij.extra.icons.utils.ProjectUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,6 +34,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -78,7 +83,7 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
     private JBLabel bottomTip;
     private JLabel additionalUIScaleTitle;
     private EditorTextField additionalUIScaleTextField;
-    private JComboBox<String> comboBoxIconsGroupSelector;
+    private JComboBox<ComboBoxWithImageItem> comboBoxIconsGroupSelector;
     private JLabel disableOrEnableOrLabel;
     private JLabel disableOrEnableLabel;
     private JCheckBox ignoreWarningsCheckBox;
@@ -103,12 +108,19 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
                 applyFilter();
             }
         });
-        buttonReloadProjectsIcons.addActionListener(e -> {
-            EnablerUtils.forceInitAllEnablers();
-            ProjectUtils.refreshOpenedProjects();
-            JOptionPane.showMessageDialog(null,
-                "All icons in project views should have been reloaded.", "Icons reloaded",
-                JOptionPane.INFORMATION_MESSAGE);
+        buttonReloadProjectsIcons.addActionListener(al -> {
+            try {
+                EnablerUtils.forceInitAllEnablers();
+                ProjectUtils.refreshAllOpenedProjects();
+                JOptionPane.showMessageDialog(null,
+                    "All icons in project views should have been reloaded.", "Icons reloaded",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                LOGGER.warn("Config updated, but failed to reload icons for project " + project.getName(), e);
+                JOptionPane.showMessageDialog(null,
+                    "Failed to reload icons, please try again later.", "Icons not reloaded",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         });
     }
 
@@ -219,12 +231,16 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         }
         service.setCustomModels(customModels);
 
-        if (isProjectForm) {
-            EnablerUtils.forceInitAllEnablers(project);
-            ProjectUtils.refresh(project);
-        } else {
-            EnablerUtils.forceInitAllEnablers();
-            ProjectUtils.refreshOpenedProjects();
+        try {
+            if (isProjectForm) {
+                EnablerUtils.forceInitAllEnablers(project);
+                ProjectUtils.refreshProject(project);
+            } else {
+                EnablerUtils.forceInitAllEnablers();
+                ProjectUtils.refreshAllOpenedProjects();
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Config updated, but failed to reload icons for project " + project.getName(), e);
         }
 
         forceUpdate = false;
@@ -276,11 +292,12 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
             ignoreWarningsCheckBox.setVisible(false);
             buttonReloadProjectsIcons.setVisible(false);
         }
-        comboBoxIconsGroupSelector.addItem("icons");
         buttonReloadProjectsIcons.setText("Reload projects icons");
         buttonReloadProjectsIcons.setToolTipText("<b>Reload icons in all project views.</b><br>" +
             "Use it if some icons were not loaded due to errors like IDE filename index issues.");
-        Arrays.stream(ModelTag.values()).forEach(modelTag -> comboBoxIconsGroupSelector.addItem(modelTag.getName() + " tagged icons"));
+        comboBoxIconsGroupSelector.setRenderer(new ComboBoxWithImageRenderer());
+        comboBoxIconsGroupSelector.addItem(new ComboBoxWithImageItem("icons"));
+        Arrays.stream(ModelTag.values()).forEach(modelTag -> comboBoxIconsGroupSelector.addItem(new ComboBoxWithImageItem(modelTag, " icons")));
     }
 
     private void createUIComponents() {
@@ -441,12 +458,13 @@ public class SettingsForm implements Configurable, Configurable.NoScroll {
         foldersFirst(allRegisteredModels);
         List<String> disabledModelIds = SettingsService.getInstance(project).getDisabledModelIds();
         Double additionalUIScale = SettingsService.getIDEInstance().getAdditionalUIScale();
+        Icon restartIcon = IconLoader.getIcon("extra-icons/plugin-internals/reboot.svg", SettingsForm.class);
         allRegisteredModels.forEach(m -> pluginIconsSettingsTableModel.addRow(new Object[]{
                 IconUtils.getIcon(m, additionalUIScale),
                 !disabledModelIds.contains(m.getId()),
                 m.getDescription(),
                 Arrays.toString(m.getTags().stream().map(ModelTag::getName).toArray()).replaceAll("\\[|]*", "").trim(),
-                !Strings.isNullOrEmpty(m.getIdeIcon()),
+                Strings.isNullOrEmpty(m.getIdeIcon()) ? null : restartIcon,
                 m.getTags(),
                 m.getId()
             })
